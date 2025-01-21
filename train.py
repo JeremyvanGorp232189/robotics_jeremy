@@ -7,27 +7,27 @@ from stable_baselines3.common.callbacks import EvalCallback, CallbackList
 from stable_baselines3.common.env_checker import check_env
 import gymnasium as gym
 from clearml import Task
-from wrapper_jeremy import CustomEnv  # Adjusted to match the actual filename
+from wrapper_jeremy import CustomEnv  # Updated to match the actual filename and imports
 
 # Configure environment variables
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 os.environ['WANDB_API_KEY'] = '7fabefdeafaca23d0547b1d4dc39d59511b55c9f'
 
 # Initialize ClearML Task
-task = Task.init(project_name='Mentor Group M/Group 2', task_name='Name')
+task = Task.init(project_name='Mentor Group M/Group 2', task_name='TrainingTask')
 task.set_base_docker('deanis/2023y2b-rl:latest')
 
 # Initialize WandB
-wandb_project_name = "custom_wandb_project"
-wandb_run_name = "experiment_run"
+wandb_project_name = "custom_training_project"
+wandb_run_name = "training_run"
 wandb_run = wandb.init(project=wandb_project_name, name=wandb_run_name, sync_tensorboard=True)
 
 # Define environment
-env = CustomEnv()
+env = CustomEnv(enable_visualization=True, max_steps=1000)
 check_env(env)
 
 # Create directories for saving models
-save_dir = f"saved_models/{wandb_run.id}"
+save_dir = f"models/{wandb_run.id}"
 os.makedirs(save_dir, exist_ok=True)
 
 # Parse arguments for hyperparameters
@@ -44,8 +44,8 @@ args = parser.parse_args()
 
 # Initialize PPO model
 model = PPO(
-    args.policy, 
-    env, 
+    policy=args.policy,
+    env=env,
     verbose=1,
     learning_rate=args.learning_rate,
     batch_size=args.batch_size,
@@ -54,18 +54,18 @@ model = PPO(
     gamma=args.gamma,
     clip_range=args.clip_range,
     vf_coef=args.value_coefficient,
-    tensorboard_log=f"wandb_runs/{wandb_run.id}"
+    tensorboard_log=f"runs/{wandb_run.id}"
 )
 
 # Define WandB callback
 wandb_callback = WandbCallback(
-    model_save_freq=100000,
+    model_save_freq=50000,
     model_save_path=save_dir,
     verbose=2
 )
 
 # Training parameters
-total_timesteps = 5_000_000
+total_timesteps = 3_000_000
 
 # Train the model
 model.learn(
@@ -73,7 +73,7 @@ model.learn(
     callback=wandb_callback,
     progress_bar=True,
     reset_num_timesteps=False,
-    tb_log_name=f"wandb_runs/{wandb_run.id}"
+    tb_log_name=f"runs/{wandb_run.id}"
 )
 
 # Save final model

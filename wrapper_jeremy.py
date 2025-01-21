@@ -1,6 +1,6 @@
-import numpy as np
 import gymnasium as gym
-from gymnasium.spaces import Box
+from gymnasium import spaces
+import numpy as np
 from sim_class import Simulation
 
 # Created by Jeremy, Student Number: 232189
@@ -22,8 +22,8 @@ class CustomEnv(gym.Env):  # Updated class name to match the expected name in tr
         }
 
         # Define action and observation spaces
-        self.action_space = Box(low=-1.0, high=1.0, shape=(3,), dtype=np.float32)
-        self.observation_space = Box(
+        self.action_space = spaces.Box(low=-1.0, high=1.0, shape=(3,), dtype=np.float32)
+        self.observation_space = spaces.Box(
             low=np.concatenate([
                 np.array([self.env_limits["x_range"][0], self.env_limits["y_range"][0], self.env_limits["z_range"][0]]),
                 -np.array([self.env_limits["x_range"][1], self.env_limits["y_range"][1], self.env_limits["z_range"][1]])
