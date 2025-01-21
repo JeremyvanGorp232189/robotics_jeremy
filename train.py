@@ -7,7 +7,7 @@ from stable_baselines3.common.callbacks import EvalCallback, CallbackList
 from stable_baselines3.common.env_checker import check_env
 import gymnasium as gym
 from clearml import Task
-from custom_env_wrapper import CustomEnv  # Rename for clarity
+from wrapper_jeremy import CustomEnv  # Adjusted to match the actual filename
 
 # Configure environment variables
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
