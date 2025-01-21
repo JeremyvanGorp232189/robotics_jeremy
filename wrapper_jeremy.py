@@ -5,7 +5,7 @@ from sim_class import Simulation
 
 # Created by Jeremy, Student Number: 232189
 
-class AdvancedEnvironment(gym.Env):
+class CustomEnv(gym.Env):  # Updated class name to match the expected name in train.py
     def __init__(self, enable_visualization=False, max_steps=1000):
         super().__init__()
         self.enable_visualization = enable_visualization
